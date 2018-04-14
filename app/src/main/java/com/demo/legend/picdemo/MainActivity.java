@@ -60,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
         click();
     }
 
+    /**
+     * 初始化SpeechUtility、FaceRequest、IdentityVerifier
+     *
+     *
+     */
     private void init() {
         speechUtility = SpeechUtility.createUtility(MainActivity.this, SpeechConstant.APPID + "=5ad1543c");
         faceRequest = new FaceRequest(MainActivity.this);
@@ -80,6 +85,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * 按钮点击事件
+     */
     private void click() {
 
         pic.setOnClickListener(v -> {
@@ -91,6 +99,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 注册，注意setParameter(SpeechConstant.AUTH_ID, "legend_of_heroes")这里，最后的字符串为6到18个长度，以数字、字母以及下划线组成，不能以数字开头
+     * 我认为这个人脸识别的操作流程应该是先上传原图，在这里称为注册
+     * 第二步是上传需要对比的图，跟原图形成的模型对比并返回对比数据。
+     * @param bytes
+     */
     private void register(byte[] bytes) {
 
         // 设置会话场景
@@ -109,6 +123,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * 回调监听
+     */
     IdentityListener identityListener = new IdentityListener() {
         @Override
         public void onResult(IdentityResult identityResult, boolean b) {
@@ -132,6 +149,11 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * 用uri获取byte[]
+     * @param uri
+     * @return
+     */
     private byte[] getPicByte(Uri uri) {
 
         byte[] bytes = null;
@@ -146,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
 
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
 
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
 
             bytes = byteArrayOutputStream.toByteArray();
 
@@ -161,6 +183,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * 打开相册选择图片
+     * @param requestCode
+     */
     protected void openAlbum(int requestCode) {
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
@@ -172,6 +198,10 @@ public class MainActivity extends AppCompatActivity {
         openAlbum(100);
     }
 
+    /**
+     * 验证图片
+     * @param uri
+     */
     private void sendPic(Uri uri) {
 
         byte[] bytes = getPicByte(uri);
@@ -184,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         switch (requestCode) {
-            case 100:
+            case 100://注册图片
 
                 if (data == null) {
                     return;
@@ -194,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
 
-            case 200:
+            case 200://验证图片
 
                 if (data == null) {
                     return;
@@ -210,6 +240,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * 获取权限
+     */
     private void getPermission() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -245,6 +278,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * 验证操作
+     * 注意setParameter(SpeechConstant.AUTH_ID, "legend_of_heroes")这里，最后的字符串为6到18个长度，以数字、字母以及下划线组成，不能以数字开头，需要与注册图片的一致
+     * @param bytes
+     */
     private void toVerifier(byte[] bytes) {
 
         info.setText("验证中...");
